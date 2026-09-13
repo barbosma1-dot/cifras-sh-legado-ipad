@@ -64,13 +64,72 @@
   }
 
   // -------------------------------------------------------------
+  // Chave no localStorage usada só como "já pedi e ganhei a cota do
+  // WebSQL neste navegador antes" — localStorage é síncrono e não
+  // pede nenhuma permissão, então é seguro ler/gravar no
+  // carregamento normal da página, ao contrário do openDatabase.
+  // -------------------------------------------------------------
+  var CHAVE_ARMAZENAMENTO_ATIVADO = 'cifra_sh_offline_armazenamento_ativado';
+
+  function jaAtivouArmazenamentoAntes() {
+    try {
+      return window.localStorage &&
+        window.localStorage.getItem(CHAVE_ARMAZENAMENTO_ATIVADO) === '1';
+    } catch (e) {
+      // Safari com "Navegação Privada"/cookies bloqueados pode lançar
+      // ao acessar localStorage. Nesse caso, trata como "nunca
+      // ativou" — o pior caso é mostrar o botão de novo, não travar.
+      return false;
+    }
+  }
+
+  function marcarArmazenamentoAtivado() {
+    try {
+      if (window.localStorage) {
+        window.localStorage.setItem(CHAVE_ARMAZENAMENTO_ATIVADO, '1');
+      }
+    } catch (e) {
+      // Sem problema se não conseguir gravar essa marca — só volta a
+      // mostrar o botão de ativação na próxima abertura.
+    }
+  }
+
+  // -------------------------------------------------------------
   // Arranque
   // -------------------------------------------------------------
   function iniciar() {
     APP_UI.init();
 
+    // CORREÇÃO CRÍTICA (erro intermitente "not authorized"/permissão
+    // negada no WebSQL):
+    //
+    // O Safari do iOS só concede de forma confiável o diálogo de
+    // aumento de cota do WebSQL quando openDatabase() é chamado
+    // DENTRO do handler de um toque real do usuário. Antes,
+    // APP_DB.init() rodava direto no DOMContentLoaded — sem toque
+    // nenhum — o que fazia o pedido de cota falhar silenciosamente
+    // em algumas aberturas. Agora, na primeiríssima vez em cada
+    // aparelho/navegador, represamos a abertura do banco atrás de um
+    // botão explícito ("Ativar armazenamento offline"); depois que
+    // isso funciona uma vez, o banco já existe no aparelho e as
+    // aberturas seguintes (inclusive automáticas) voltam a ser
+    // confiáveis — daí `abrirBanco()` já rodar direto quando
+    // jaAtivouArmazenamentoAntes() for true.
+    if (!jaAtivouArmazenamentoAntes()) {
+      APP_UI.mostrarBotaoAtivarArmazenamento(function () {
+        abrirBanco();
+      });
+      return;
+    }
+
+    abrirBanco();
+  }
+
+  function abrirBanco() {
     APP_DB.init(
       function onBancoPronto() {
+        marcarArmazenamentoAtivado();
+
         // Mostra logo o que já existir localmente, sem esperar a
         // rede — o app nunca fica com tela em branco enquanto tenta
         // sincronizar.
@@ -119,8 +178,13 @@
           'Detalhe técnico: ' + detalhe
         );
 
+        // Chama abrirBanco() direto (não iniciar()): esse retry já
+        // está rodando dentro do handler de clique do próprio botão
+        // (ver mostrarBotaoTentarNovamente em app-ui.js), então já
+        // conta como toque do usuário — não precisa passar de novo
+        // pelo gate de "Ativar armazenamento offline".
         APP_UI.mostrarBotaoTentarNovamente(function () {
-          iniciar();
+          abrirBanco();
         });
       }
     );
