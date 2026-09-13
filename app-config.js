@@ -42,11 +42,24 @@ var APP_CONFIG = {
   INTERVALO_SYNC_MS: 15 * 60 * 1000,
 
   // -------------------------------------------------------------
-  // Tamanho do banco WebSQL, em bytes. 10MB é folgado pro volume de
-  // texto (título+letra+cifra) de um repertório de milhares de
-  // músicas — cifra é texto puro, pesa pouco.
+  // Tamanho do banco WebSQL, em bytes.
+  //
+  // CRÍTICO — NÃO AUMENTAR SEM ENTENDER ISTO:
+  // O Safari do iOS concede até 5 MB de cota pra um WebSQL novo SEM
+  // pedir permissão nenhuma. Acima de 5 MB, ele precisa mostrar o
+  // diálogo "Aumentar Tam. do Banco de Dados?" — e existe uma corrida
+  // conhecida no WebKit em que o CREATE TABLE (que já roda logo após
+  // openDatabase, dentro da mesma inicialização) tenta executar ANTES
+  // desse diálogo ser resolvido pelo usuário, e é negado com o erro
+  // "could not prepare statement (1 not authorized)". Foi exatamente
+  // esse erro que o app estava dando.
+  //
+  // Ficando em 4 MB (abaixo do teto de 5 MB liberado sem prompt), a
+  // abertura do banco nunca depende desse diálogo — funciona sempre,
+  // de primeira. Cifra é texto puro (título+letra+cifra), então 4 MB
+  // ainda é folgado pra um repertório de centenas de músicas.
   // -------------------------------------------------------------
-  WEBSQL_TAMANHO_BYTES: 10 * 1024 * 1024,
+  WEBSQL_TAMANHO_BYTES: 4 * 1024 * 1024,
 
   WEBSQL_NOME: 'cifra_sh_offline',
   WEBSQL_VERSAO: '1.0',
