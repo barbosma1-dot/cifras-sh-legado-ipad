@@ -80,6 +80,39 @@ var APP_UI = (function () {
 
     barra.className = 'status-bar status-' + estado;
     span.textContent = texto;
+
+    // Qualquer atualização normal de status (voltou a ficar online,
+    // sincronizou etc.) remove um eventual botão de retry deixado
+    // por um erro anterior, pra não ficar um botão "fantasma" depois
+    // que o problema já foi resolvido.
+    var botaoAntigo = document.getElementById('btn-tentar-novamente');
+    if (botaoAntigo && botaoAntigo.parentNode) {
+      botaoAntigo.parentNode.removeChild(botaoAntigo);
+    }
+  }
+
+  // Usado só no caminho de erro fatal de inicialização (banco local
+  // não abriu) — dá pro usuário um jeito de tentar de novo sem
+  // precisar saber que "recarregar a página" resolveria.
+  function mostrarBotaoTentarNovamente(aoClicar) {
+    var barra = document.getElementById('status-bar');
+
+    var jaExiste = document.getElementById('btn-tentar-novamente');
+    if (jaExiste) {
+      return;
+    }
+
+    var botao = document.createElement('button');
+    botao.id = 'btn-tentar-novamente';
+    botao.type = 'button';
+    botao.textContent = 'Tentar novamente';
+    botao.className = 'btn-tentar-novamente';
+    botao.addEventListener('click', function () {
+      atualizarStatusBar('desconhecido', 'Tentando de novo…');
+      aoClicar();
+    }, false);
+
+    barra.appendChild(botao);
   }
 
   // -------------------------------------------------------------
@@ -351,6 +384,7 @@ var APP_UI = (function () {
   return {
     init: init,
     atualizarStatusBar: atualizarStatusBar,
+    mostrarBotaoTentarNovamente: mostrarBotaoTentarNovamente,
     renderizarListaRepertorios: renderizarListaRepertorios,
     renderizarListaCifras: renderizarListaCifras,
     atualizarOpcoesDeCategoria: atualizarOpcoesDeCategoria,
