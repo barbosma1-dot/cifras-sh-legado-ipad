@@ -94,7 +94,13 @@ var APP_UI = (function () {
   // Usado só no caminho de erro fatal de inicialização (banco local
   // não abriu) — dá pro usuário um jeito de tentar de novo sem
   // precisar saber que "recarregar a página" resolveria.
-  function mostrarBotaoTentarNovamente(aoClicar) {
+  //
+  // textoBotao é opcional (default 'Tentar novamente'). Também usado
+  // por mostrarBotaoAtivarArmazenamento abaixo, com outro texto —
+  // são o mesmo mecanismo porque em ambos os casos o que importa é
+  // que o clique do usuário chame aoClicar() dentro do handler do
+  // toque (ver comentário grande em mostrarBotaoAtivarArmazenamento).
+  function mostrarBotaoTentarNovamente(aoClicar, textoBotao) {
     var barra = document.getElementById('status-bar');
 
     var jaExiste = document.getElementById('btn-tentar-novamente');
@@ -105,7 +111,7 @@ var APP_UI = (function () {
     var botao = document.createElement('button');
     botao.id = 'btn-tentar-novamente';
     botao.type = 'button';
-    botao.textContent = 'Tentar novamente';
+    botao.textContent = textoBotao || 'Tentar novamente';
     botao.className = 'btn-tentar-novamente';
     botao.addEventListener('click', function () {
       atualizarStatusBar('desconhecido', 'Tentando de novo…');
@@ -113,6 +119,37 @@ var APP_UI = (function () {
     }, false);
 
     barra.appendChild(botao);
+  }
+
+  // -------------------------------------------------------------
+  // Ativação do armazenamento offline (primeira abertura no aparelho)
+  //
+  // POR QUÊ ISSO EXISTE:
+  // O Safari do iOS só é confiável para mostrar (e conceder) o
+  // diálogo "Aumentar Tam. do Banco de Dados?" quando o
+  // window.openDatabase() que pede a cota acontece DENTRO da pilha
+  // de chamadas de um toque real do usuário (um handler de 'click'/
+  // 'touchend'). Quando openDatabase roda sozinho no carregamento da
+  // página (DOMContentLoaded, sem toque nenhum), o comportamento é
+  // inconsistente: às vezes o diálogo aparece do mesmo jeito, às
+  // vezes o WebKit simplesmente nega a cota sem avisar — e as
+  // gravações seguintes falham silenciosamente. Foi exatamente esse
+  // padrão intermitente ("às vezes funciona, às vezes dá erro de
+  // permissão sem motivo aparente") que o app estava sofrendo.
+  //
+  // A solução é represar a PRIMEIRA abertura do banco atrás de um
+  // toque explícito do usuário — depois disso o WebSQL já existe no
+  // aparelho e as aberturas seguintes (mesmo automáticas) são
+  // confiáveis, porque não estão mais pedindo aumento de cota do
+  // zero. Guardamos esse "já foi ativado uma vez" no localStorage
+  // (síncrono, não pede permissão nenhuma) pra só mostrar esse botão
+  // na primeiríssima vez em cada aparelho/navegador.
+  function mostrarBotaoAtivarArmazenamento(aoClicar) {
+    atualizarStatusBar(
+      'desconhecido',
+      'Primeira vez neste iPad — toque para ativar o armazenamento offline'
+    );
+    mostrarBotaoTentarNovamente(aoClicar, 'Ativar armazenamento offline');
   }
 
   // -------------------------------------------------------------
@@ -385,6 +422,7 @@ var APP_UI = (function () {
     init: init,
     atualizarStatusBar: atualizarStatusBar,
     mostrarBotaoTentarNovamente: mostrarBotaoTentarNovamente,
+    mostrarBotaoAtivarArmazenamento: mostrarBotaoAtivarArmazenamento,
     renderizarListaRepertorios: renderizarListaRepertorios,
     renderizarListaCifras: renderizarListaCifras,
     atualizarOpcoesDeCategoria: atualizarOpcoesDeCategoria,
