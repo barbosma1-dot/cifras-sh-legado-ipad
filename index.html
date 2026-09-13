@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html manifest="manifest.appcache" lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<!--
+  Viewport fixo pensado no iPad mini 1 (1024x768pt / retina 2048x1536).
+  Não usamos "device-width" sozinho porque este cliente é feito sob
+  medida para UM aparelho conhecido, não para qualquer tela.
+-->
+<meta name="viewport" content="width=1024, initial-scale=1, user-scalable=no">
+
+<!-- Faz o atalho na Tela de Início abrir em modo tela cheia (sem barra
+     do Safari), como se fosse um app nativo instalado. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Cifra SH Offline">
+
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="style.css">
+
+<title>Cifra SH — Offline</title>
+</head>
+<body>
+
+  <!--
+    Barra de status fixa no topo. Nunca deixamos a tela "quieta" sem
+    dizer o que está vendo: online/offline, e quando foi a última
+    sincronização bem-sucedida. Preenchida por app-ui.js.
+  -->
+  <div id="status-bar" class="status-bar status-desconhecido">
+    <span id="status-texto">Verificando conexão…</span>
+  </div>
+
+  <!-- Navegação entre as duas listas principais. A tela de detalhe da
+       cifra (screen-cifra-detalhe) não tem botão aqui — só se chega
+       nela clicando numa cifra, e ela mesma tem um botão "Voltar". -->
+  <nav id="nav-principal" class="nav-principal">
+    <button type="button" id="nav-btn-repertorios" class="nav-btn nav-btn-ativo">
+      Repertórios
+    </button>
+    <button type="button" id="nav-btn-cifras" class="nav-btn">
+      Cifras
+    </button>
+  </nav>
+
+  <main id="conteudo">
+
+    <!-- TELA 1: Lista de repertórios -->
+    <section id="screen-repertorios" class="screen screen-ativa">
+      <h1 class="screen-titulo">Repertórios</h1>
+      <div id="lista-repertorios" class="lista">
+        <!-- Preenchido dinamicamente por app-ui.js -->
+        <p class="lista-vazia">Carregando…</p>
+      </div>
+    </section>
+
+    <!-- TELA 2: Lista de cifras (busca + filtro) -->
+    <section id="screen-cifras" class="screen">
+      <h1 class="screen-titulo">Cifras</h1>
+
+      <div class="filtros">
+        <input
+          type="text"
+          id="busca-cifras"
+          class="campo-busca"
+          placeholder="Buscar por título…"
+          autocorrect="off"
+          autocapitalize="off"
+        >
+        <select id="filtro-categoria" class="campo-select">
+          <option value="">Todas as categorias</option>
+          <!-- Opções preenchidas dinamicamente por app-ui.js,
+               a partir das categorias que existem no cache local -->
+        </select>
+      </div>
+
+      <div id="lista-cifras" class="lista">
+        <p class="lista-vazia">Carregando…</p>
+      </div>
+    </section>
+
+    <!-- TELA 3: Visualizador de uma cifra específica -->
+    <section id="screen-cifra-detalhe" class="screen">
+      <button type="button" id="btn-voltar-cifra" class="btn-voltar">
+        &larr; Voltar
+      </button>
+
+      <div class="cifra-cabecalho">
+        <h1 id="cifra-titulo" class="cifra-titulo"></h1>
+        <p id="cifra-subinfo" class="cifra-subinfo"></p>
+      </div>
+
+      <!-- white-space:pre-wrap no CSS preserva a formatação de
+           linha/coluna da letra+cifra tal como veio salva. -->
+      <pre id="cifra-conteudo" class="cifra-conteudo"></pre>
+    </section>
+
+  </main>
+
+  <!--
+    Scripts em ordem de dependência, sem módulos ES (nada de
+    type="module"/import/export — o Safari 9 não suporta). Cada um
+    expõe funções/objetos globais simples que o próximo usa.
+    (app-config.js, app-db.js, app-auth.js, app-sync.js, app-ui.js e
+    app-main.js ainda serão entregues nos próximos lotes.)
+  -->
+  <script src="app-config.js"></script>
+  <script src="app-db.js"></script>
+  <script src="app-auth.js"></script>
+  <script src="app-sync.js"></script>
+  <script src="app-ui.js"></script>
+  <script src="app-main.js"></script>
+
+</body>
+</html>

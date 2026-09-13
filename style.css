@@ -1,0 +1,223 @@
+/* ===================================================================
+   Cifra SH — Offline (cliente legado iPad mini 1 / iOS 9)
+   CSS puro, sem Tailwind/framework. Propositalmente simples e leve —
+   este aparelho é fraco pros padrões atuais, então evitamos qualquer
+   animação/efeito pesado (sombras grandes, blur, transições longas).
+   =================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: #f5f1ea;
+  color: #2b2b2b;
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* -webkit-text-size-adjust evita que o Safari mude o tamanho da
+     fonte sozinho ao girar o iPad. */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* -------------------------------------------------------------------
+   Barra de status (online/offline)
+   ------------------------------------------------------------------- */
+
+.status-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 6px 14px;
+  font-size: 13px;
+  text-align: center;
+  color: #fff;
+}
+
+.status-desconhecido {
+  background: #8a8a8a;
+}
+
+.status-online {
+  background: #2f7a3d;
+}
+
+.status-offline {
+  background: #b8860b;
+}
+
+.status-erro {
+  background: #a83232;
+}
+
+/* -------------------------------------------------------------------
+   Navegação principal
+   ------------------------------------------------------------------- */
+
+.nav-principal {
+  position: fixed;
+  top: 28px;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  display: -webkit-box;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd4c2;
+}
+
+.nav-btn {
+  -webkit-box-flex: 1;
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 14px 8px;
+  font-size: 16px;
+  color: #6b5f4f;
+  border-bottom: 3px solid transparent;
+}
+
+.nav-btn-ativo {
+  color: #b5541a;
+  border-bottom-color: #b5541a;
+  font-weight: bold;
+}
+
+/* -------------------------------------------------------------------
+   Conteúdo / telas
+   ------------------------------------------------------------------- */
+
+#conteudo {
+  padding-top: 78px;
+  padding-bottom: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.screen {
+  display: none;
+  padding: 16px 20px;
+}
+
+.screen-ativa {
+  display: block;
+}
+
+.screen-titulo {
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: #4a3f30;
+}
+
+/* -------------------------------------------------------------------
+   Listas (repertórios e cifras)
+   ------------------------------------------------------------------- */
+
+.lista {
+  display: block;
+}
+
+.lista-vazia {
+  color: #8a7f6d;
+  font-size: 15px;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.lista-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e5ddca;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #2b2b2b;
+}
+
+.lista-item-titulo {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lista-item-sub {
+  font-size: 13px;
+  color: #8a7f6d;
+  display: block;
+}
+
+/* -------------------------------------------------------------------
+   Filtros da tela de cifras
+   ------------------------------------------------------------------- */
+
+.filtros {
+  display: -webkit-box;
+  margin-bottom: 14px;
+}
+
+.campo-busca {
+  -webkit-box-flex: 2;
+  flex: 2;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid #ddd4c2;
+  border-radius: 6px;
+  margin-right: 8px;
+  background: #fff;
+}
+
+.campo-select {
+  -webkit-box-flex: 1;
+  flex: 1;
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid #ddd4c2;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* -------------------------------------------------------------------
+   Detalhe da cifra (tela de leitura ao vivo)
+   ------------------------------------------------------------------- */
+
+.btn-voltar {
+  border: none;
+  background: transparent;
+  color: #b5541a;
+  font-size: 16px;
+  padding: 8px 0;
+  margin-bottom: 10px;
+}
+
+.cifra-cabecalho {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5ddca;
+  padding-bottom: 10px;
+}
+
+.cifra-titulo {
+  font-size: 24px;
+  color: #4a3f30;
+}
+
+.cifra-subinfo {
+  font-size: 14px;
+  color: #8a7f6d;
+  margin-top: 4px;
+}
+
+/* Fonte grande de propósito — pensado pra quem está tocando um
+   instrumento e lendo a cifra a uma certa distância do tablet. */
+.cifra-conteudo {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 19px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #2b2b2b;
+}

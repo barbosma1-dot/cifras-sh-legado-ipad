@@ -1,0 +1,35 @@
+CACHE MANIFEST
+# versao: 1
+#
+# IMPORTANTE — leia antes de editar qualquer arquivo do app:
+#
+# O Safari só percebe que precisa baixar os arquivos de novo quando
+# o CONTEÚDO DESTE ARQUIVO (manifest.appcache) muda — nem que seja
+# 1 caractere. Ele NÃO compara o conteúdo de index.html/app-*.js
+# com o que já tem salvo; só olha se este manifesto mudou.
+#
+# Ou seja: toda vez que você editar QUALQUER arquivo listado abaixo
+# (corrigir um bug no app-ui.js, mudar uma cor no style.css etc.),
+# você precisa OBRIGATORIAMENTE subir o número do comentário "versao"
+# acima (1 -> 2 -> 3...) e publicar de novo — senão os iPads que já
+# instalaram o app vão continuar usando a versão antiga guardada,
+# pra sempre, mesmo com internet.
+
+CACHE:
+index.html
+style.css
+app-config.js
+app-db.js
+app-auth.js
+app-sync.js
+app-ui.js
+app-main.js
+icon-180.png
+
+# Tudo que não está na lista acima (as chamadas ao Supabase, tanto de
+# autenticação quanto de dados) deve poder ser buscado normalmente
+# pela rede quando houver internet — é isso que a linha abaixo
+# garante. Sem isso, o AppCache tende a tentar "proteger" o app
+# bloqueando requisições de rede que não conhece.
+NETWORK:
+*

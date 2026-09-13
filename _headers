@@ -1,0 +1,7 @@
+# Cloudflare Pages lê este arquivo automaticamente (não precisa
+# configurar nada no painel). Sem isso, o Safari ignora o
+# manifest.appcache SEM avisar — o AppCache exige este Content-Type
+# exato pra ser reconhecido como manifesto de cache offline.
+
+/manifest.appcache
+  Content-Type: text/cache-manifest
