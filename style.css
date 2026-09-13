@@ -41,6 +41,17 @@ html, body {
   background: #8a8a8a;
 }
 
+.btn-tentar-novamente {
+  display: block;
+  margin: 6px auto 0;
+  padding: 4px 14px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid #fff;
+  border-radius: 4px;
+}
+
 .status-online {
   background: #2f7a3d;
 }
