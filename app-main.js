@@ -96,11 +96,32 @@
         }, false);
       },
       function onErroBanco(erro) {
+        var detalhe = '(sem detalhe)';
+        if (erro) {
+          if (erro.message) {
+            detalhe = erro.message;
+          }
+          if (typeof erro.code !== 'undefined') {
+            detalhe += ' [code=' + erro.code + ']';
+          }
+        }
+
+        // Log no console também, pra quem tiver acesso a um Mac e
+        // puder inspecionar remotamente (Safari > Develop > iPad).
+        if (window.console && console.error) {
+          console.error('Falha ao abrir/preparar o WebSQL:', erro);
+        }
+
         APP_UI.atualizarStatusBar(
           'erro',
           'Este aparelho não conseguiu abrir o armazenamento local. ' +
-          'O app não pode funcionar offline aqui.'
+          'O app não pode funcionar offline aqui. ' +
+          'Detalhe técnico: ' + detalhe
         );
+
+        APP_UI.mostrarBotaoTentarNovamente(function () {
+          iniciar();
+        });
       }
     );
   }
