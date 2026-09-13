@@ -18,8 +18,8 @@ var APP_CONFIG = {
   // mas ainda assim não é a mesma coisa que a service_role key,
   // que NUNCA deve entrar aqui.
   // -------------------------------------------------------------
-  SUPABASE_URL: 'https://SEU-PROJETO.supabase.co',
-  SUPABASE_ANON_KEY: 'COLE-AQUI-A-ANON-KEY',
+  SUPABASE_URL: 'https://tjztesszwishbgmnakqa.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_jbzy-ItjjtwXOWRNu-WNSQ_kbz2ZGyl',
 
   // -------------------------------------------------------------
   // Credencial usada pelo iPad legado para se autenticar sozinho
@@ -30,8 +30,8 @@ var APP_CONFIG = {
   // pessoal, e adicionar essa conta como membro (mission_members)
   // das missões cujo repertório o iPad precisa ver.
   // -------------------------------------------------------------
-  SYNC_EMAIL: 'ipad.legado@example.org',
-  SYNC_SENHA: 'TROCAR-ESTA-SENHA',
+  SYNC_EMAIL: 'barbosma3@gmail.com',
+  SYNC_SENHA: 'Sh@lom-1982',
 
   // -------------------------------------------------------------
   // Intervalo (em milissegundos) entre tentativas automáticas de
