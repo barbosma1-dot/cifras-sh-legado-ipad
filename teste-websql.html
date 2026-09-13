@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teste isolado de WebSQL</title>
+<style>
+  body { font-family: -apple-system, sans-serif; padding: 24px; font-size: 18px; line-height: 1.5; }
+  #resultado { margin-top: 20px; padding: 16px; border-radius: 8px; white-space: pre-wrap; }
+  .ok { background: #d4edda; color: #155724; }
+  .falhou { background: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+  <h1>Teste isolado de WebSQL</h1>
+  <p>Esta página não tem nenhuma relação com o app Cifra SH — só testa se
+  este Safari, neste domínio, consegue abrir e escrever num banco WebSQL do zero.</p>
+  <div id="resultado">Testando…</div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('resultado');
+
+      function mostrar(classe, texto) {
+        el.className = classe;
+        el.textContent = texto;
+      }
+
+      if (!window.openDatabase) {
+        mostrar('falhou', 'FALHOU: este Safari não tem window.openDatabase (WebSQL indisponível de vez).');
+        return;
+      }
+
+      var db;
+      try {
+        db = window.openDatabase('teste_isolado_db', '', 'Banco de teste isolado', 2 * 1024 * 1024);
+      } catch (e) {
+        mostrar('falhou', 'FALHOU no openDatabase: ' + e.message + ' [code=' + e.code + ']');
+        return;
+      }
+
+      db.transaction(
+        function (tx) {
+          tx.executeSql('CREATE TABLE IF NOT EXISTS teste (id INTEGER PRIMARY KEY, valor TEXT)');
+          tx.executeSql('INSERT INTO teste (valor) VALUES (?)', ['funcionou']);
+        },
+        function (erro) {
+          mostrar('falhou',
+            'FALHOU na transação: ' + (erro.message || '(sem mensagem)') +
+            ' [code=' + erro.code + ']\n\n' +
+            'Isso confirma que o Safari deste iPad está negando WebSQL de forma geral, ' +
+            'não é algo específico do app Cifra SH.'
+          );
+        },
+        function () {
+          mostrar('ok',
+            'FUNCIONOU! Este Safari consegue abrir e escrever em WebSQL normalmente.\n\n' +
+            'Isso significa que o problema é específico do domínio/site do app Cifra SH ' +
+            '(dados corrompidos daquele domínio específico), não do Safari em geral.'
+          );
+        }
+      );
+    })();
+  </script>
+</body>
+</html>
